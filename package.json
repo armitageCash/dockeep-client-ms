@@ -1,0 +1,14 @@
+{
+  "name": "dockeep-client-ms",
+  "version": "1.0.0",
+  "description": "Dockeep clients microservice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.14.2"
+  }
+}
