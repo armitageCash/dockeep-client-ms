@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de CloudFormation para una API Gateway con integración de VPC Link
+
+Resources:
+  MyApiGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: MyApi
+      ProtocolType: HTTP
+      Description: API Gateway con integración de VPC Link
+
+  MyVpcLink:
+    Type: AWS::ApiGatewayV2::VpcLink
+    Properties:
+      Name: MyVpcLink
+      SecurityGroupIds:
+        - sg-0123456789abcdef0  # Reemplaza con el ID de tu grupo de seguridad
+      SubnetIds:
+        - subnet-0123456789abcdef0  # Reemplaza con el ID de tus subredes
+
+  MyIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MyApiGateway
+      IntegrationType: HTTP_PROXY
+      IntegrationUri: http://nombre-de-dominio:3000  # Reemplaza con el DNS de tu contenedor
+      VpcLinkIds:
+        - !Ref MyVpcLink
+
+  MyRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MyApiGateway
+      RouteKey: ANY /{proxy+}
+      Target: !Sub 'integrations/${MyIntegration}'
+      AuthorizationType: NONE
+
+Outputs:
+  ApiUrl:
+    Description: URL de la API Gateway
+    Value: !GetAtt MyApiGateway.ApiEndpoint
