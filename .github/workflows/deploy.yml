@@ -35,8 +35,11 @@ jobs:
         # Nombre del clúster ECS
         cluster_name="dockeep-clients-ms-cluster"
 
-        # Crea el clúster si no existe (verifica si ya existe)
-        aws ecs describe-clusters --cluster $cluster_name || aws ecs create-cluster --cluster-name $cluster_name
+        # Verifica si el clúster existe
+        if ! aws ecs describe-clusters --cluster $cluster_name; then
+          # Crea el clúster si no existe
+          aws ecs create-cluster --cluster-name $cluster_name
+        fi
 
     - name: Create Task Definition
       run: |
