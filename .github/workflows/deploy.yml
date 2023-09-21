@@ -1,5 +1,3 @@
-name: Deploy to Amazon ECS (Fargate)
-
 on:
   push:
     branches:
@@ -47,11 +45,12 @@ jobs:
       - name: Create Amazon ECS Cluster
         run: |
           aws ecs create-cluster --cluster-name ${{ env.ECS_CLUSTER }} --region ${{ env.AWS_REGION }}
-
+          
       - name: Download task definition
         run: |
           aws ecs describe-services \
             --service ${{ env.ECS_SERVICE }} \
+            --cluster ${{ env.ECS_CLUSTER }} \
             --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0]"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
