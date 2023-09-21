@@ -63,4 +63,5 @@ jobs:
             --service-name ${{ env.ECS_SERVICE }} \
             --task-definition ${{ steps.task-def.outputs.task-definition }} \
             --launch-type FARGATE \
-            --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}"
+            --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
+            --desired-count 1 # Ajusta este valor según sea necesario
