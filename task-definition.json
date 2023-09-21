@@ -4,7 +4,7 @@
   "executionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "dockeep-container-clients-ms",
+      "name": "dockeep-clients-ms-container ",
       "image": "dockeep-clients-ms:latest",
       "memory": 2048,
       "memoryReservation": 2048,
