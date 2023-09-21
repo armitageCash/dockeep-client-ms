@@ -29,14 +29,35 @@ jobs:
     - name: Push Docker image to Amazon ECR
       run: |
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+    - name: Create Amazon ECS Cluster
+      run: |
+        # Nombre del clúster ECS
+        cluster_name="dockeep-clients-ms-cluster"
+
+        # Crea el clúster si no existe (verifica si ya existe)
+        aws ecs describe-clusters --cluster $cluster_name || aws ecs create-cluster --cluster-name $cluster_name
+
+    - name: Create Task Definition
+      run: |
+        # Nombre de la definición de tarea ECS
+        task_definition_name="dockeep-clients-ms-task"
+
+        # Nombre del archivo de definición de tarea (debes crear este archivo)
+        task_definition_file="task-definition.json" # Cambia a tu archivo de definición de tarea
+
+        # Crea o actualiza la definición de tarea
+        aws ecs register-task-definition --cli-input-json file://$task_definition_file
+
+      # Si tienes un archivo de definición de tarea JSON, debes agregarlo al directorio de GitHub Actions antes de este paso.
+
 
     - name: Deploy to AWS ECS
       run: |
-        aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment
+        aws ecs update-service --cluster $cluster_name --service dockeep-clients-ms --force-new-deployment
     - name: Deploy CloudFormation Stack
       run: |
         # Nombre de la pila CloudFormation
-        stack_name="mi-stack-cloudformation"
+        stack_name="dockeep-clients-ms-stack"
 
         # Nombre del archivo de plantilla CloudFormation (debes crear este archivo)
         template_file="template.yml"
