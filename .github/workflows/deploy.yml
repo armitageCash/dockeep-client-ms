@@ -6,12 +6,12 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-2                   # Establece esto con tu región AWS preferida, por ejemplo, us-west-1
-  ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}           # Establece esto con el nombre de tu repositorio Amazon ECR
-  ECS_SERVICE: dockeep-clients-ms                 # Establece esto con el nombre de tu servicio Amazon ECS
-  ECS_CLUSTER: dockeep-clients-ms-cluster                 # Establece esto con el nombre de tu clúster Amazon ECS
-  ECS_TASK_DEFINITION: task-definition.json # Establece esto con la ruta a tu archivo de definición de tarea Amazon ECS, por ejemplo, .aws/task-definition.json
-  CONTAINER_NAME: dockeep-clients-ms-container               # Establece esto con el nombre del contenedor en la sección containerDefinitions de tu definición de tarea
+  AWS_REGION: us-east-2
+  ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
+  ECS_SERVICE: dockeep-clients-ms
+  ECS_CLUSTER: dockeep-clients-ms-cluster
+  ECS_TASK_DEFINITION: task-definition.json
+  CONTAINER_NAME: dockeep-clients-ms-container
 
 jobs:
   deploy:
@@ -29,6 +29,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Wait for Amazon ECS cluster to be created (if it doesn't exist)
+        run: |
+          # Nombre del clúster ECS
+          cluster_name="${{ env.ECS_CLUSTER }}"
+
+          # Verifica si el clúster existe
+          while ! aws ecs describe-clusters --cluster $cluster_name --region ${{ env.AWS_REGION }}; do
+            echo "Waiting for ECS cluster $cluster_name to be created..."
+            sleep 10  # Espera 10 segundos antes de volver a verificar
+          done
+        timeout-minutes: 15
 
       - name: Login to Amazon ECR
         id: login-ecr
