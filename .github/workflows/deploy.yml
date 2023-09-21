@@ -45,14 +45,23 @@ jobs:
       - name: Create Amazon ECS Cluster
         run: |
           aws ecs create-cluster --cluster-name ${{ env.ECS_CLUSTER }} --region ${{ env.AWS_REGION }}
+
+    - name: Create Amazon ECS Service (Fargate)
+        run: |
+          aws ecs create-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service-name dockeep-clients-ms \
+            --task-definition ${{ steps.task-def.outputs.task-definition }} \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
+            --desired-count 1 # Ajusta este valor según sea necesario
           
       - name: Download task definition
         run: |
           aws ecs describe-services \
             --service ${{ env.ECS_SERVICE }} \
             --cluster ${{ env.ECS_CLUSTER }} \
-            --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0]" \
-            --output text | xargs -I {} aws ecs describe-task-definition --task-definition {} --query 'taskDefinition'
+            --query "reverse(sort_by(services, &createdAt))[0].taskDefinition"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -61,13 +70,3 @@ jobs:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
-
-      - name: Create Amazon ECS Service (Fargate)
-        run: |
-          aws ecs create-service \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service-name ${{ env.ECS_SERVICE }} \
-            --task-definition ${{ steps.task-def.outputs.task-definition }} \
-            --launch-type FARGATE \
-            --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
-            --desired-count 1 # Ajusta este valor según sea necesario
