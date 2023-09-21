@@ -46,8 +46,9 @@ jobs:
 
       - name: Download task definition
         run: |
-          aws ecs describe-task-definition --task-definition service \
-          --query taskDefinition > task-definition.json
+          aws ecs describe-services \
+            --service ${{ env.ECS_SERVICE }} \
+            --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0] 
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
