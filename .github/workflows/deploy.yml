@@ -49,9 +49,10 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-services \
-            --service dockeep-clients-ms \
+            --service ${{ env.ECS_SERVICE }} \
             --cluster ${{ env.ECS_CLUSTER }} \
-            --query "services[].taskDefinition" | jq -r ".[0]"
+            --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0]" \
+            --output text | xargs -I {} aws ecs describe-task-definition --task-definition {} --query 'taskDefinition'
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -65,7 +66,7 @@ jobs:
         run: |
           aws ecs create-service \
             --cluster ${{ env.ECS_CLUSTER }} \
-            --service-name dockeep-clients-ms \
+            --service-name ${{ env.ECS_SERVICE }} \
             --task-definition ${{ steps.task-def.outputs.task-definition }} \
             --launch-type FARGATE \
             --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
