@@ -48,7 +48,7 @@ jobs:
         run: |
           aws ecs describe-services \
             --service ${{ env.ECS_SERVICE }} \
-            --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0] 
+            --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0]"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
