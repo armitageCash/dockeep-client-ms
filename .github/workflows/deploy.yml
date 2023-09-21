@@ -35,7 +35,7 @@ jobs:
         cluster_name="dockeep-clients-ms-cluster"
 
         # Crea el clúster si no existe (verifica si ya existe)
-        aws ecs describe-clusters --cluster $cluster_name || aws ecs create-cluster --cluster-name $cluster_name
+        aws ecs describe-clusters --cluster dockeep-clients-ms-cluster || aws ecs create-cluster --cluster-name dockeep-clients-ms-cluster
 
     - name: Create Task Definition
       run: |
@@ -53,7 +53,7 @@ jobs:
 
     - name: Deploy to AWS ECS
       run: |
-        aws ecs update-service --cluster $cluster_name --service dockeep-clients-ms --force-new-deployment
+        aws ecs update-service --cluster dockeep-clients-ms-cluster --service dockeep-clients-ms --force-new-deployment
     - name: Deploy CloudFormation Stack
       run: |
         # Nombre de la pila CloudFormation
