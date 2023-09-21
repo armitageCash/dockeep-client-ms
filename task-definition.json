@@ -46,7 +46,7 @@
       "dockerLabels": null,
       "systemControls": null,
       "privileged": null,
-      "name": "dockeep-clients-ms"
+      "name": "dockeep-clients-ms-container"
     }
   ],
   "placementConstraints": [],
