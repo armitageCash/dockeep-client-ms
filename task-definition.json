@@ -1,36 +1,75 @@
 {
-  "family": "dockeep-clients-ms",
-  "networkMode": "awsvpc",
+  "ipcMode": null,
   "executionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "dockeep-clients-ms-container",
-      "image": "dockeep-clients-ms:latest",
-      "memory": 2048,
-      "memoryReservation": 2048,
-      "essential": true,
+      "dnsSearchDomains": null,
+      "environmentFiles": null,
+      "logConfiguration": null,
+      "entryPoint": null,
       "portMappings": [
         {
-          "containerPort": 3000,
-          "hostPort": 3000
+          "hostPort": 3000,
+          "protocol": "tcp",
+          "containerPort": 3000
         }
       ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "dockeep-clients-ms-log-group",
-          "awslogs-region": "us-east-2",
-          "awslogs-stream-prefix": "dockeep-clients-ms"
-        }
-      },
+      "command": null,
+      "linuxParameters": null,
+      "cpu": 1024,
+      "environment": [],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
       "mountPoints": [],
-      "ulimits": [
-        {
-          "name": "nofile",
-          "softLimit": 65536,
-          "hardLimit": 65536
-        }
-      ]
+      "workingDirectory": null,
+      "secrets": null,
+      "dockerSecurityOptions": null,
+      "memory": "512",
+      "memoryReservation": null,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "dockeep-clients-ms:latest",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null,
+      "name": "dockeep-clients-ms"
     }
-  ]
+  ],
+  "placementConstraints": [],
+  "memory": "512",
+  "taskRoleArn": null,
+  "compatibilities": ["FARGATE"],
+  "taskDefinitionArn": "arn:aws:ecs:us-west-2:459930247502:task-definition/dockeep-clients-ms:1",
+  "family": "dockeep-clients-ms",
+  "requiresAttributes": [
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    }
+  ],
+  "pidMode": null,
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "revision": 1,
+  "status": "ACTIVE",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
 }
