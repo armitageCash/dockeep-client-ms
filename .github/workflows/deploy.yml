@@ -36,9 +36,9 @@ jobs:
         cluster_name="dockeep-clients-ms-cluster"
 
         # Verifica si el clúster existe
-        if ! aws ecs describe-clusters --cluster $cluster_name; then
+        if ! aws ecs describe-clusters --cluster dockeep-clients-ms-cluster; then
           # Crea el clúster si no existe
-          aws ecs create-cluster --cluster-name $cluster_name
+          aws ecs create-cluster --cluster-name dockeep-clients-ms-cluster
         fi
 
     - name: Create Task Definition
@@ -54,7 +54,7 @@ jobs:
 
     - name: Deploy to AWS ECS
       run: |
-        aws ecs update-service --cluster $cluster_name --service dockeep-clients-ms --force-new-deployment
+        aws ecs update-service --cluster dockeep-clients-ms-cluster --service dockeep-clients-ms --force-new-deployment
 
     - name: Deploy CloudFormation Stack
       run: |
@@ -86,4 +86,3 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      cluster_name: $cluster_name # Agregamos la variable cluster_name aquí
