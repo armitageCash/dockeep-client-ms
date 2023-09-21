@@ -1,5 +1,5 @@
 {
-  "family":"DockeepBackendClients",
+  "family": "mi-tarea-fargate",
   "networkMode": "awsvpc",
   "executionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
   "containerDefinitions": [
@@ -18,9 +18,9 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "dockeep-clients-ms-log-group",
+          "awslogs-group": "mi-log-group",
           "awslogs-region": "us-east-2",
-          "awslogs-stream-prefix": "dockeep-clients-ms"
+          "awslogs-stream-prefix": "mi-contenedor"
         }
       },
       "mountPoints": [],
@@ -32,5 +32,11 @@
         }
       ]
     }
-  ]
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "2048",
+  "volumes": []
 }
