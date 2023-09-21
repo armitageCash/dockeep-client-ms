@@ -86,8 +86,7 @@ jobs:
           --task-definition ${{ steps.task-def.outputs.task-definition }} \
           --launch-type FARGATE \
           --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
-          --desired-count 1 \
-          --service-arn $ECS_SERVICE_ARN   
+          --desired-count 1 
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
