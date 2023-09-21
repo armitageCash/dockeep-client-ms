@@ -47,14 +47,14 @@ jobs:
           aws ecs create-cluster --cluster-name ${{ env.ECS_CLUSTER }} --region ${{ env.AWS_REGION }}
 
       - name: Create Amazon ECS Service (Fargate)
-          run: |
-            aws ecs create-service \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service-name dockeep-clients-ms \
-              --task-definition ${{ steps.task-def.outputs.task-definition }} \
-              --launch-type FARGATE \
-              --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
-              --desired-count 1 # Ajusta este valor según sea necesario
+        run: |
+          aws ecs create-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service-name dockeep-clients-ms \
+            --task-definition ${{ steps.task-def.outputs.task-definition }} \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
+            --desired-count 1 # Ajusta este valor según sea necesario
             
       - name: Download task definition
         run: |
