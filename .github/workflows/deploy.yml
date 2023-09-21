@@ -49,9 +49,9 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-services \
-            --service ${{ env.ECS_SERVICE }} \
+            --service dockeep-clients-ms \
             --cluster ${{ env.ECS_CLUSTER }} \
-            --query "reverse(sort_by(services, &CreatedAt)).taskDefinition[0]"
+            --query "services[].taskDefinition" | jq -r ".[0]"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
