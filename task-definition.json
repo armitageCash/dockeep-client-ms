@@ -1,5 +1,5 @@
 {
-  "family":"dockeep-task-definition-clients-ms",
+  "family":"service",
   "networkMode": "awsvpc",
   "executionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
   "containerDefinitions": [
