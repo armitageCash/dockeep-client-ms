@@ -52,6 +52,7 @@
   "placementConstraints": [],
   "memory": "512",
   "taskRoleArn": null,
+  "family": "dockeep-clients-ms:4",
   "pidMode": null,
   "requiresCompatibilities": ["FARGATE"],
   "networkMode": "awsvpc",
