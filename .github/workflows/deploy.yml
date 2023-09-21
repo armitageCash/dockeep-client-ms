@@ -12,7 +12,9 @@ jobs:
     # Define cluster_name en el nivel del flujo de trabajo como una variable de entorno
     env:
       cluster_name: "dockeep-clients-ms-cluster"
-
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -84,8 +86,3 @@ jobs:
         api_url=$(aws cloudformation describe-stacks --stack-name $stack_name --query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' --output text)
 
         echo "URL de la API: $api_url"
-
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
