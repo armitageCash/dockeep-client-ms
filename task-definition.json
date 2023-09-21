@@ -53,7 +53,7 @@
   "memory": "512",
   "taskRoleArn": null,
   "compatibilities": ["FARGATE"],
-  "taskDefinitionArn": "arn:aws:ecs:us-west-2:459930247502:task-definition/dockeep-clients-ms:1",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-2:459930247502:task-definition/dockeep-clients-ms:1",
   "family": "dockeep-clients-ms",
   "requiresAttributes": [
     {
