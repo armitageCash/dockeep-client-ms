@@ -9,6 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    # Define cluster_name en el nivel del flujo de trabajo como una variable de entorno
+    env:
+      cluster_name: "dockeep-clients-ms-cluster"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -34,13 +38,10 @@ jobs:
 
     - name: Create Amazon ECS Cluster
       run: |
-        # Nombre del clúster ECS
-        cluster_name="dockeep-clients-ms-cluster"
-
         # Verifica si el clúster existe
-        if ! aws ecs describe-clusters --cluster $cluster_name; then
+        if ! aws ecs describe-clusters --cluster ${{ env.cluster_name }}; then
           # Crea el clúster si no existe
-          aws ecs create-cluster --cluster-name $cluster_name
+          aws ecs create-cluster --cluster-name ${{ env.cluster_name }}
         fi
 
     - name: Create Task Definition
@@ -56,7 +57,7 @@ jobs:
 
     - name: Deploy to AWS ECS
       run: |
-        aws ecs update-service --cluster $cluster_name --service dockeep-clients-ms --force-new-deployment
+        aws ecs update-service --cluster ${{ env.cluster_name }} --service dockeep-clients-ms --force-new-deployment
 
     - name: Deploy CloudFormation Stack
       run: |
