@@ -32,6 +32,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
   ECS_SERVICE: dockeep-clients-ms
+  ECS_SERVICE_ARN: arn:aws:ecs:us-east-2:123456789012:service/dockeep-clients-ms
   ECS_CLUSTER: dockeep-clients-ms-cluster
   ECS_TASK_DEFINITION: task-definition.json
   CONTAINER_NAME: dockeep-clients-ms-container
@@ -76,6 +77,17 @@ jobs:
         task-definition: task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
+
+    - name: Create Amazon ECS Service
+      run: |
+        aws ecs create-service \
+          --cluster ${{ env.ECS_CLUSTER }} \
+          --service-name dockeep-clients-ms \
+          --task-definition ${{ steps.task-def.outputs.task-definition }} \
+          --launch-type FARGATE \
+          --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
+          --desired-count 1 \
+          --service-arn $ECS_SERVICE_ARN   
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
