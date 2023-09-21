@@ -1,88 +1,64 @@
-name: Despliegue en AWS
+name: Deploy to Amazon ECS
 
 on:
   push:
     branches:
       - main
 
+env:
+  AWS_REGION: us-east-2                   # Establece esto con tu región AWS preferida, por ejemplo, us-west-1
+  ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}           # Establece esto con el nombre de tu repositorio Amazon ECR
+  ECS_SERVICE: dockeep-clients-ms                 # Establece esto con el nombre de tu servicio Amazon ECS
+  ECS_CLUSTER: dockeep-clients-ms-cluster                 # Establece esto con el nombre de tu clúster Amazon ECS
+  ECS_TASK_DEFINITION: task-definition.json # Establece esto con la ruta a tu archivo de definición de tarea Amazon ECS, por ejemplo, .aws/task-definition.json
+  CONTAINER_NAME: dockeep-clients-ms-container               # Establece esto con el nombre del contenedor en la sección containerDefinitions de tu definición de tarea
+
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
+    environment: production
 
-    # Define cluster_name en el nivel del flujo de trabajo como una variable de entorno
-    env:
-      cluster_name: "dockeep-clients-ms-cluster"
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set default.region ${{ secrets.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Build Docker image
-      run: |
-        docker build -t dockeep-clients-ms .
-        docker tag dockeep-clients-ms:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-    - name: Authenticate to Amazon ECR
-      run: |
-        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Construye un contenedor Docker y
+          # súbelo a ECR para que pueda
+          # ser desplegado en ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Push Docker image to Amazon ECR
-      run: |
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
 
-    - name: Create Amazon ECS Cluster
-      run: |
-        # Verifica si el clúster existe
-        if ! aws ecs describe-clusters --cluster ${{ env.cluster_name }}; then
-          # Crea el clúster si no existe
-          aws ecs create-cluster --cluster-name ${{ env.cluster_name }}
-        fi
-
-    - name: Create Task Definition
-      run: |
-        # Nombre de la definición de tarea ECS
-        task_definition_name="dockeep-clients-ms-task"
-
-        # Nombre del archivo de definición de tarea (debes crear este archivo)
-        task_definition_file="task-definition.json" # Cambia a tu archivo de definición de tarea
-
-        # Crea o actualiza la definición de tarea
-        aws ecs register-task-definition --cli-input-json file://$task_definition_file
-
-    - name: Deploy to AWS ECS
-      run: |
-        aws ecs update-service --cluster ${{ env.cluster_name }} --service dockeep-clients-ms --force-new-deployment
-
-    - name: Deploy CloudFormation Stack
-      run: |
-        # Nombre de la pila CloudFormation
-        stack_name="dockeep-clients-ms-stack"
-
-        # Nombre del archivo de plantilla CloudFormation (debes crear este archivo)
-        template_file="template.yml"
-
-        # Parámetros opcionales para la pila (si es necesario)
-        parameters="--parameters ParameterKey=KeyName,ParameterValue=my-key"
-
-        # Crea o actualiza la pila de CloudFormation
-        aws cloudformation deploy \
-          --stack-name $stack_name \
-          --template-file $template_file \
-          --parameter-overrides $parameters \
-          --capabilities CAPABILITY_IAM
-
-        # Espera hasta que la pila se complete
-        aws cloudformation wait stack-create-complete --stack-name $stack_name
-
-        # Obtiene la URL de consumo de la API de CloudFormation (deberías definirla en tu plantilla)
-        api_url=$(aws cloudformation describe-stacks --stack-name $stack_name --query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' --output text)
-
-        echo "URL de la API: $api_url"
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
