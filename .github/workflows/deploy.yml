@@ -46,6 +46,14 @@ jobs:
         run: |
           aws ecs create-cluster --cluster-name ${{ env.ECS_CLUSTER }} --region ${{ env.AWS_REGION }}
       
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true 
+      
       - name: Download task definition
         run: |
           aws ecs describe-services \
@@ -65,7 +73,7 @@ jobs:
         run: |
           aws ecs create-service \
             --cluster ${{ env.ECS_CLUSTER }} \
-            --service-name dockeep-clients-ms \
+            --service-name ${{ env.ECS_SERVICE }} \
             --task-definition ${{ steps.task-def.outputs.task-definition }} \
             --launch-type FARGATE \
             --network-configuration "awsvpcConfiguration={subnets=[subnet-dockeep-clients-ms],securityGroups=[sg--dockeep-clients-ms]}" \
