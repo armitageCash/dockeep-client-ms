@@ -1,36 +1,36 @@
 {
-    "family": "dockeep-task-definition-clients-ms",
-    "networkMode": "awsvpc",
-    "executionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
-    "containerDefinitions": [
-      {
-        "name": "dockeep-container-clients-ms",
-        "image": "dockeep-clients-ms:latest",
-        "memory": 2048,
-        "memoryReservation": 2048,
-        "essential": true,
-        "portMappings": [
-          {
-            "containerPort": 3000,
-            "hostPort": 4000
-          }
-        ],
-        "logConfiguration": {
-          "logDriver": "awslogs",
-          "options": {
-            "awslogs-group": "dockeep-clients-ms-log-group",
-            "awslogs-region": "us-east-2",
-            "awslogs-stream-prefix": "dockeep-clients-ms"
-          }
-        },
-        "mountPoints": [],
-        "ulimits": [
-          {
-            "name": "nofile",
-            "softLimit": 65536,
-            "hardLimit": 65536
-          }
-        ]
-      }
-    ]
-  }
+  "family": "dockeep-task-definition-clients-ms",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "dockeep-container-clients-ms",
+      "image": "mi-imagen:latest",
+      "memory": 2048,
+      "memoryReservation": 2048,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "dockeep-clients-ms-log-group",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "dockeep-clients-ms"
+        }
+      },
+      "mountPoints": [],
+      "ulimits": [
+        {
+          "name": "nofile",
+          "softLimit": 65536,
+          "hardLimit": 65536
+        }
+      ]
+    }
+  ]
+}
