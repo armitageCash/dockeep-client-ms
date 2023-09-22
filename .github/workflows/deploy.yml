@@ -8,9 +8,9 @@ on:
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  S3_BUCKET_NAME: my-s3-bucket
+  S3_BUCKET_NAME: dockeep-cloudformation-templates
   OBJECT_KEY: ecs-stack.yml  # Nombre del objeto que deseas verificar
-  LOCAL_FILE_PATH: ./ecs-stack.yml  # Ruta local al archivo
+  LOCAL_FILE_PATH: ./cloudformation/ecs-stack.yml  # Ruta local al archivo
 
 jobs:
   deploy:
