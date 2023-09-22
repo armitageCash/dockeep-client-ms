@@ -33,12 +33,19 @@ jobs:
     steps:
       - name: Update CloudFormation Stack
         id: update-stack
-        with:
-          stack-name: 'dockeep-clients-ms-ecs-stack'
-          template: './cloudformation/ecs-stack.yml'
-          apply-change-set: ${{ github.event_name != 'repository_dispatch' }}
-          aws-region: 'us-east-2'
-          capabilities: 'CAPABILITY_NAMED_IAM, CAPABILITY_IAM'
+        run: |
+          aws cloudformation create-stack \
+            --stack-name dockeep-clients-ms-ecs-stack \
+            --template-body file://cloudformation/ecs-stack.yml \
+            --capabilities CAPABILITY_NAMED_IAM
+          aws cloudformation wait stack-create-complete \
+            --stack-name dockeep-clients-ms-ecs-stack
+          service_arn=$(aws ecs describe-services \
+            --cluster dockeep-clients-cluster \
+            --service dockeep-clients-service \
+            --query 'services[0].serviceArn' \
+            --output text)
+          echo "Service ARN: $service_arn"
 
   deploy-ecs:
     name: Deploy to ECS
