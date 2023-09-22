@@ -35,6 +35,7 @@ jobs:
         run: |
           aws cloudformation create-stack \
             --stack-name dockeep-clients-stack \
+             --cli-input-json \
             --template-body file://ecs-stack.json \
             --capabilities CAPABILITY_NAMED_IAM
 
