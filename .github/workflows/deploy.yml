@@ -43,7 +43,7 @@ jobs:
         run: |
           local_hash=${{ steps.local-file-hash.outputs.hash }}
           s3_hash=$(aws s3api head-object --bucket ${{ env.S3_BUCKET_NAME }} --key ${{ env.OBJECT_KEY }} --query 'ETag' --output text)
-          if [ "$local_hash" != "$s3_hash" ]; then
+          if [ "$local_hash" != "$s3_hash" ] && !$local_hash; then
             echo "File has changed, uploading to S3"
             # Upload the file to S3 because the hashes are different
             aws s3 cp ${{ env.LOCAL_FILE_PATH }} s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }}
