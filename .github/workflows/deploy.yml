@@ -35,7 +35,7 @@ jobs:
         run: |
           aws cloudformation create-stack \
             --stack-name dockeep-clients-stack \
-            --template-body file://ecs-stack.yml \
+            --template-body file://ecs-stack.yaml \
             --capabilities CAPABILITY_NAMED_IAM
 
       - name: Wait for stack creation
