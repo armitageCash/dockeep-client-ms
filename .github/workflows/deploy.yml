@@ -35,8 +35,8 @@ jobs:
         run: |
           aws cloudformation create-stack \
             --stack-name dockeep-clients-stack \
-            --template-body file://../ecs-stack.json \
-            --capabilities CAPABILITY_NAMED_IAM
+            --capabilities CAPABILITY_NAMED_IAM \
+            --template-body file:///ecs-stack.json
 
       - name: Wait for stack creation
         run: |
