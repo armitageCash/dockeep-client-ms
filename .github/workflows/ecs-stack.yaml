@@ -1,0 +1,31 @@
+Resources:
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+
+  ECRRepository:
+    Type: AWS::ECR::Repository
+
+  ECSTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: dockeep-clients-task-definition
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: '256'
+      Memory: '512'
+
+  ECSService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref ECSCluster
+      ServiceName: dockeep-clients-service
+      TaskDefinition: !Ref ECSTaskDefinition
+      LaunchType: FARGATE
+      DesiredCount: 1
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets:
+            - subnet-dockeep-clients # Reemplaza con tus subnets
+          SecurityGroups:
+            - sg-dockeep-clients # Reemplaza con tus grupos de seguridad
