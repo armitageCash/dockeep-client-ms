@@ -36,7 +36,13 @@ jobs:
         id: check-s3-object
         run: |
           # Verifica si el objeto existe en el bucket de S3
-          aws s3 ls s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }} || exit 0
+          if ! aws s3 ls s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }}; then
+            # El objeto no existe, intenta crearlo en S3
+            if ! aws s3 cp ${{ env.LOCAL_FILE_PATH }} s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }}; then
+              echo "Failed to create S3 object."
+              exit 1
+            fi
+          fi
 
       - name: Compare file hashes
         id: compare-hashes
