@@ -12,10 +12,9 @@ env:
   CONTAINER_NAME: dockeep-clients-ms-container
 
 jobs:
-  deploy-cloudformation-stack:
-    name: Build Stack ECS
+  deploy:
+    name: Deploy Workflow
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -27,6 +26,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+  build-stack-ecs:
+    name: Build Stack ECS
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
       - name: Deploy ECS stack
         run: |
           aws cloudformation create-stack \
@@ -50,23 +54,12 @@ jobs:
           echo "Service ARN: $service_arn"
 
   deploy-ecs:
-    name: Deploy
+    name: Deploy to ECS
     runs-on: ubuntu-latest
+    needs: build-stack-ecs
     environment: production
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
       - name: Login to Amazon ECR
-        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push image to Amazon ECR
