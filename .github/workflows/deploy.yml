@@ -15,6 +15,9 @@ jobs:
   deploy:
     name: Deploy Workflow
     runs-on: ubuntu-latest
+    defaults:
+    run:
+      working-directory: ./app
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -36,7 +39,7 @@ jobs:
           aws cloudformation create-stack \
             --stack-name dockeep-clients-stack \
             --capabilities CAPABILITY_NAMED_IAM \
-            --template-body file:///home/ecs-stack.json
+            --template-body file://app/ecs-stack.json
 
       - name: Wait for stack creation
         run: |
