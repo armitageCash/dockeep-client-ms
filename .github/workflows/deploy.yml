@@ -52,7 +52,7 @@ jobs:
           fi
 
       - name: Deploy ECS stack
-        if: steps.compare-hashes.outputs.stdout ==
+        if: steps.compare-hashes.outputs.stdout == ''
         run: |
           # El objeto no existe o el archivo ha cambiado, realiza la creación de la pila de CloudFormation aquí
           aws cloudformation create-stack \
