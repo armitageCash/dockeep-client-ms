@@ -1,3 +1,12 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
 name: Deploy to Amazon ECS
 
 on:
@@ -6,90 +15,60 @@ on:
       - main
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  S3_BUCKET_NAME: dockeep-cloudformation-templates
-  OBJECT_KEY: ecs-stack.yml  # Nombre del objeto que deseas verificar
-  LOCAL_FILE_PATH: ./cloudformation/ecs-stack.yml  # Ruta local al archivo
+  AWS_REGION: ${{ secrets.AWS_REGION }}                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}            # set this to your Amazon ECR repository name
+  ECS_SERVICE: dockeep-clients-ms-service                  # set this to your Amazon ECS service name
+  ECS_CLUSTER: dockeep-clients-ms-cluster                  # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: ecs-task-definition.json  # set this to the path to your Amazon ECS task definition
+  CONTAINER_NAME: dockeep-clients-ms-container           # set this to the name of the container in the
+                                               # containerDefinitions section of your task definition
 
 jobs:
   deploy:
-    name: Deploy Workflow
+    name: Deploy
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Calculate local file hash
-        id: local-file-hash
-        run: |
-          echo "::set-output name=hash::$(sha256sum ${{ env.LOCAL_FILE_PATH }} | awk '{print $1}')"
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-      - name: Check if S3 object exists
-        id: check-s3-object
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Verifica si el objeto existe en el bucket de S3
-          if ! aws s3 ls s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }}; then
-            # El objeto no existe, intenta crearlo en S3
-            if ! aws s3 cp ${{ env.LOCAL_FILE_PATH }} s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }}; then
-              echo "Failed to create S3 object."
-              exit 1
-            fi
-          fi
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Compare file hashes
-        id: compare-hashes
-        run: |
-          local_hash=${{ steps.local-file-hash.outputs.hash }}
-          s3_hash=$(aws s3api head-object --bucket ${{ env.S3_BUCKET_NAME }} --key ${{ env.OBJECT_KEY }} --query 'ETag' --output text)
-          if [ "$local_hash" != "$s3_hash" ] && !$s3_hash; then
-            echo "File has changed, uploading to S3"
-            # Upload the file to S3 because the hashes are different
-            aws s3 cp ${{ env.LOCAL_FILE_PATH }} s3://${{ env.S3_BUCKET_NAME }}/${{ env.OBJECT_KEY }}
-          else
-            echo "File has not changed, skipping S3 upload"
-          fi
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy ECS stack
-        if: steps.compare-hashes.outputs.stdout == ''
-        run: |
-          # Intenta crear la pila de CloudFormation, maneja la excepción si ya existe
-          set +e
-          create_stack_output=$(aws cloudformation create-stack \
-            --stack-name dockeep-clients-ms-ecs-stack \
-            --template-url https://${{ env.S3_BUCKET_NAME }}.s3.${{ env.AWS_REGION }}.amazonaws.com/${{ env.OBJECT_KEY }} \
-            --capabilities CAPABILITY_NAMED_IAM 2>&1)
-          create_stack_exit_code=$?
-          set -e
-
-          if [ $create_stack_exit_code -ne 0 ]; then
-            if [[ $create_stack_output == *"AlreadyExistsException"* ]]; then
-              echo "Stack already exists. Continuing..."
-            else
-              echo "Failed to create CloudFormation stack."
-              exit 1
-            fi
-          fi
-
-      - name: Wait for stack creation
-        run: |
-          # Espera a que se complete la creación de la pila
-          aws cloudformation wait stack-create-complete \
-            --stack-name dockeep-clients-ms-ecs-stack
-
-      - name: Get ECS Service ARN
-        id: get-service-arn
-        run: |
-          service_arn=$(aws ecs describe-services \
-            --cluster dockeep-clients-cluster \
-            --service dockeep-clients-service \
-            --query 'services[0].serviceArn' \
-            --output text)
-          echo "Service ARN: $service_arn"
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

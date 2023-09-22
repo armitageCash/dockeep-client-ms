@@ -52,7 +52,7 @@
   "placementConstraints": [],
   "memory": "512",
   "taskRoleArn": null,
-  "family": "dockeep-clients-ms:4",
+  "family": "dockeep-clients-ms",
   "pidMode": null,
   "requiresCompatibilities": [
     "FARGATE"
