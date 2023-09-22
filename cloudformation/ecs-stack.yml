@@ -1,6 +1,7 @@
 Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
+    clusterName: dockeep-clients-cluster
 
   ECRRepository:
     Type: AWS::ECR::Repository
