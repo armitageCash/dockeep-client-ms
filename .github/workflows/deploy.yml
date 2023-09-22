@@ -36,7 +36,7 @@ jobs:
         run: |
           aws cloudformation create-stack \
             --stack-name dockeep-clients-ms-ecs-stack \
-            --cli-input-json file://./ecs-task-definition.json
+            --cli-input-json file://ecs-task-definition.json
             --capabilities CAPABILITY_NAMED_IAM
           aws cloudformation wait stack-create-complete \
             --stack-name dockeep-clients-ms-ecs-stack
