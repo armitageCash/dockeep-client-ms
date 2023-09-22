@@ -54,7 +54,9 @@
   "taskRoleArn": null,
   "family": "dockeep-clients-ms:4",
   "pidMode": null,
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "networkMode": "awsvpc",
   "cpu": "256",
   "inferenceAccelerators": null,
