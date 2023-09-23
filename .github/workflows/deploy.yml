@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
   ECS_SERVICE: dockeep-clients-ms-service
   ECS_CLUSTER: dockeep-clients-ms-cluster
-  ECS_TASK_DEFINITION: dockeep-clients-ms
+  ECS_TASK_DEFINITION: dockeep-clients-ms-task-definition
   CONTAINER_NAME: dockeep-clients-ms-container          
 
 jobs:
