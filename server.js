@@ -1,8 +1,22 @@
 const Koa = require('koa');
-const app = new Koa();
+const Router = require('koa-router');
 
-app.use(async ctx => {
-  ctx.body = 'Hello World';
+const app = new Koa();
+const router = new Router();
+
+router.get('/', async (ctx) => {
+  ctx.status = 200;
+  ctx.body = 'hello Fargate';
 });
 
-app.listen(3000);
+router.get('/status-check', async (ctx) => {
+  ctx.status = 200;
+  ctx.body = 'La aplicación está en funcionamiento';
+});
+
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+app.listen(3000, () => {
+  console.log('Servidor Koa en funcionamiento en el puerto 3000');
+});
