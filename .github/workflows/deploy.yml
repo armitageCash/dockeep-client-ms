@@ -5,12 +5,12 @@ on:
     branches:
       - main
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}            # set this to your Amazon ECR repository name
-  ECS_SERVICE: dockeep-clients-ms-service                  # set this to your Amazon ECS service name
-  ECS_CLUSTER: dockeep-clients-ms-cluster                  # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: 'dockeep-clients-ms'                # set this to the path to your Amazon ECS task definition
-  CONTAINER_NAME: dockeep-clients-ms-container           # set this to the name of the container in the
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  ECS_SERVICE: dockeep-clients-ms-service
+  ECS_CLUSTER: dockeep-clients-ms-cluster
+  ECS_TASK_DEFINITION: dockeep-clients-ms
+  CONTAINER_NAME: dockeep-clients-ms-container          
 
 jobs:
   create-docker-image:
