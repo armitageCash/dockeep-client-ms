@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expone el puerto 3000 que será utilizado por la aplicación
-EXPOSE 3000
+# EXPOSE 3000
 
 # Comando para ejecutar la aplicación cuando se inicie el contenedor
 CMD ["node", "server.js"]
