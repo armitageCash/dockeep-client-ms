@@ -39,7 +39,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     - name: Subir archivo a S3
       run: |
-        aws s3 cp nombre-del-archivo api-definition/main.yml s3://dockeep-clients-api-definition/main.yml
+        aws s3 cp api-definition/main.yml s3://dockeep-clients-api-definition/main.yml
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
