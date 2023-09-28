@@ -62,7 +62,7 @@ jobs:
         id: import-openapi
         run: |
           # Comando para importar la definición OpenAPI y obtener el ID de la API
-          api_id=$(aws apigateway import-rest-api --body file://../api-definition/main.yml --query 'id' --output text)
+          api_id=$(aws apigateway import-rest-api --body file://../../api-definition/main.yml --query 'id' --output text)
           echo "::set-output name=api-id::$api_id"
       
       - name: Create or Update API Gateway
