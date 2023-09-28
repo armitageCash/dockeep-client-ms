@@ -64,7 +64,9 @@ jobs:
           aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: s3://dockeep-clients-api-definition
-          source_dir: 'api-definition/main.yml'
+          working-directory: ./api-definition
+          source_dir: 'main.yml'
+
 
   integrate-openapi:
     name: Integrate OpenAPI
