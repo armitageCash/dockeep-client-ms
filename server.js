@@ -4,7 +4,7 @@ const Router = require('koa-router');
 const app = new Koa();
 const router = new Router();
 
-router.get('/', async (ctx) => {
+router.get('/apigateway', async (ctx) => {
   ctx.status = 200;
   ctx.body = 'hello Fargate';
 });

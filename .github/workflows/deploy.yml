@@ -1,55 +1,86 @@
-name: Deploy to ECS fargate
+name: Deploy to ECS Fargate
 
 on:
   push:
     branches:
       - main
+
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
   ECS_SERVICE: dockeep-clients-ms-service
   ECS_CLUSTER: dockeep-clients-ms-cluster
   ECS_TASK_DEFINITION: dockeep-clients-ms-task-definition
-  CONTAINER_NAME: dockeep-clients-ms-container          
+  CONTAINER_NAME: dockeep-clients-ms-container
 
 jobs:
   create-docker-image:
-    name: Build docker
+    name: Build Docker
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Configurar Credenciales de AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      - uses: actions/checkout@v2
 
-    - name: Loggin into AWS ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Create and add tags to docker image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Login into AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Create and add tags to Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy:
     name: Upload image to AWS ECR
     runs-on: ubuntu-latest
     needs: create-docker-image
     steps:
-      - name: Configurar Credenciales de AWS
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
- 
+
       - name: Update ECS service
         run: |
           aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition ${{ env.ECS_TASK_DEFINITION }} --force-new-deployment
+
+  integrate-openapi:
+    name: Integrate OpenAPI
+    runs-on: ubuntu-latest
+    needs: deploy  # Espera a que se complete el paso 'deploy'
+    env:
+      TU_ID_DE_API: ${{ steps.import-openapi.outputs.api-id }}  # Almacena el ID de la API importada
+    steps:
+      - name: Import OpenAPI
+        id: import-openapi
+        run: |
+          # Comando para importar la definición OpenAPI y obtener el ID de la API
+          api_id=$(aws apigateway import-rest-api --body file://openapi/main.yml --query 'id' --output text)
+          echo "::set-output name=api-id::$api_id"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create or Update API Gateway
+        run: |
+          aws apigateway create-or-update-api --rest-api-id $TU_ID_DE_API --mode merge --fail-on-warnings
+
+      - name: Create Deployment
+        run: |
+          aws apigateway create-deployment --rest-api-id $TU_ID_DE_API --stage-name nombre_de_etapa --description descripcion_del_despliegue
