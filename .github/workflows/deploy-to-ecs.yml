@@ -52,21 +52,14 @@ jobs:
       - name: Update ECS service
         run: |
           aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition ${{ env.ECS_TASK_DEFINITION }} --force-new-deployment
-
-  upload-api-definition:
-    name: Upload API Definition to S3
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - uses: actions/checkout@master
-      - uses: shallwefootball/s3-upload-action@master
-        with:
-          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-          aws_bucket: s3://dockeep-clients-api-definition
-          aws-region: ${{ env.AWS_REGION }}
-          source_dir: 'api-definition'
-
+      - name: Subir archivo a S3
+        run: |
+          aws s3 cp api-definition/main.yml s3://dockeep-clients-api-definition/main.yml
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
+          
   integrate-openapi:
     name: Integrate OpenAPI
     runs-on: ubuntu-latest
