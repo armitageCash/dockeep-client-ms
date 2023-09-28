@@ -63,7 +63,7 @@ jobs:
   integrate-openapi:
     name: Integrate OpenAPI
     runs-on: ubuntu-latest
-    needs: upload-api-definition  # Espera a que se complete el paso 'upload-api-definition'
+    needs: deploy  # Espera a que se complete el paso 'upload-api-definition'
     steps:
       - name: Import OpenAPI
         id: import-openapi
