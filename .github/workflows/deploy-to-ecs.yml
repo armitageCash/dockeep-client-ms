@@ -66,7 +66,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Upload API Definition to S3
         run: |
-          aws s3 cp api-definition/main.yml s3://dockeep-clients-api-definition/main.yml
+          aws s3 cp api-definition/main.yml s3://dockeep-clients-api-definition
 
   integrate-openapi:
     name: Integrate OpenAPI
