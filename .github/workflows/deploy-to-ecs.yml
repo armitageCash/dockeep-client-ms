@@ -56,13 +56,13 @@ jobs:
   integrate-openapi:
     name: Integrate OpenAPI
     runs-on: ubuntu-latest
-    needs: deploy  # Espera a que se complete el paso 'upload-api-definition'
+    needs: deploy
     steps:
       - name: Import OpenAPI
         id: import-openapi
         run: |
           # Comando para importar la definición OpenAPI desde S3 y obtener el ID de la API
-          api_id=$(aws apigateway import-rest-api --body fileb://main.yml --query 'id' --output text)
+          api_id=$(aws apigateway import-rest-api --template-body file://main.yml --query 'id' --output text)
           echo "::set-output name=api-id::$api_id"
       
       - name: Create or Update API Gateway
