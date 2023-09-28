@@ -3,7 +3,7 @@ info:
   title: Mi API
   version: 1.0.0
 paths:
-  /mi-ruta-get:
+  /apigateway:
     get:
       summary: Obtener información
       responses:
