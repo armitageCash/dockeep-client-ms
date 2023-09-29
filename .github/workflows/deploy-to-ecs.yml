@@ -72,7 +72,7 @@ jobs:
       - name: Run Deploy to ECS Fargate script
         run: |
           # Cambia la ruta al script Bash
-          bash path/to/your/deploy-to-ecs-fargate.sh    
+          bash deploy-openapi-to-apigateway.sh    
       - name: Run Deploy to ECS Fargate script
         run: |
           # Cambia la ruta al script Bash
@@ -83,4 +83,4 @@ jobs:
 
       - name: Create Deployment
         run: |
-          aws apigateway create-deployment --rest-api-id ${{ env.API_ID }} --stage-name production --description despliegue-dockeep-clients-ms
+          aws apigateway create-deployment --rest-api-id ${{ env.API_ID }} --stage-name develop --description despliegue-dockeep-clients-ms

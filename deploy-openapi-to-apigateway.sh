@@ -10,7 +10,7 @@ echo "::set-env name=API_ID::$api_id"
 # Define la etapa y la variable que deseas configurar
 STAGE_NAME="develop" # Cambia "production" a "develop"
 VARIABLE_NAME="ECS_ELB_ENDPOINT"
-VARIABLE_VALUE="your-elb-url-here"
+VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
 
 # Configura la stageVariable en tu API Gateway utilizando la variable api_id
 aws apigateway update-stage \
