@@ -1,6 +1,6 @@
 openapi: "3.0.1"
 info:
-  title: My API
+  title: Doockeep clients microservice
   version: "1.0"
 paths:
   /apigateway:
@@ -13,4 +13,4 @@ paths:
         uri: "http://${stageVariables.ECS_ELB_ENDPOINT}/apigateway" # Reemplaza con la URL real de tu ELB
         httpMethod: GET
         connectionType: VPC_LINK # Si tu servicio ECS está en la misma VPC que la API Gateway
-        connectionId: vpc-0da3cc621412dd80c # Reemplaza con el ID de tu VPC Link
+        connectionId: eice-0dcee94236cf7f81e # Reemplaza con el ID de tu VPC Link

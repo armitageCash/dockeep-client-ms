@@ -72,15 +72,10 @@ jobs:
       - name: Run Deploy to ECS Fargate script
         run: |
           # Cambia la ruta al script Bash
-          bash deploy-openapi-to-apigateway.sh    
-      - name: Run Deploy to ECS Fargate script
-        run: |
-          # Cambia la ruta al script Bash
           bash deploy-openapi-to-apigateway.sh
       - name: Create or Update API Gateway
         run: |
           aws apigateway create-or-update-api --rest-api-id ${{ env.API_ID }} --mode merge --fail-on-warnings
-
       - name: Create Deployment
         run: |
           aws apigateway create-deployment --rest-api-id ${{ env.API_ID }} --stage-name develop --description despliegue-dockeep-clients-ms
