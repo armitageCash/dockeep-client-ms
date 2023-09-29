@@ -1,15 +1,16 @@
-openapi: 3.0.0
+openapi: "3.0.1"
 info:
-  title: Mi API
-  version: 1.0.0
+  title: My API
+  version: "1.0"
 paths:
   /apigateway:
     get:
-      summary: Obtener información
       responses:
-        '200':
+        "200":
           description: Respuesta exitosa
-          content:
-            application/json:
-              example:
-                message: "¡Hola, mundo!"
+      x-amazon-apigateway-integration:
+        type: http_proxy
+        uri: "http://${stageVariables.ECS_ELB_ENDPOINT}/apigateway" # Reemplaza con la URL real de tu ELB
+        httpMethod: GET
+        connectionType: VPC_LINK # Si tu servicio ECS está en la misma VPC que la API Gateway
+        connectionId: vpc-0da3cc621412dd80c # Reemplaza con el ID de tu VPC Link
