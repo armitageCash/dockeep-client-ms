@@ -18,9 +18,9 @@ region="us-east-1"
 aws cloudformation create-stack \
     --stack-name "$stack_name" \
     --template-body "file://$template_file" \
+    --region "$region"
    #  --parameters "file://$parameters_file" \
    #  --tags "file://$tags_file" \
-    --region "$region"
 
 # Verificar si la creación de la pila fue exitosa
 if [ $? -eq 0 ]; then
