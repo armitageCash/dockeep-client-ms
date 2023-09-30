@@ -14,17 +14,17 @@ template_file="cloudformation-definition.json"
 # Región de AWS donde deseas crear la pila
 region="us-east-2"
 
-# Comando para crear la pila de CloudFormation
+# Comando para crear o actualizar la pila de CloudFormation
 aws cloudformation create-stack \
     --stack-name "$stack_name" \
     --template-body "file://$template_file" \
-    --region "$region"
-   #  --parameters "file://$parameters_file" \
-   #  --tags "file://$tags_file" \
+    --region "$region" \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --on-failure DO_NOTHING  # Esto previene que se elimine la pila en caso de error
 
 # Verificar si la creación de la pila fue exitosa
 if [ $? -eq 0 ]; then
-    echo "Pila de CloudFormation creada con éxito."
+    echo "Pila de CloudFormation creada o actualizada con éxito."
 else
-    echo "Error al crear la pila de CloudFormation."
+    echo "Error al crear o actualizar la pila de CloudFormation."
 fi
