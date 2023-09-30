@@ -6,23 +6,35 @@ stack_name="dockep-clients-ms-stack"
 # Nombre del archivo JSON de la plantilla
 template_file="cloudformation-definition.json"
 
-# Nombre del archivo JSON de parámetros (opcional)
-# parameters_file="mis-parametros.json"
-
-# Nombre del archivo JSON de tags (opcional)
-
 # Región de AWS donde deseas crear la pila
 region="us-east-2"
 
-# Comando para crear o actualizar la pila de CloudFormation
-aws cloudformation create-stack \
-    --stack-name "$stack_name" \
-    --template-body "file://$template_file" \
-    --region "$region" \
-    --capabilities CAPABILITY_NAMED_IAM \
-    --on-failure DO_NOTHING  # Esto previene que se elimine la pila en caso de error
+# Comprobar si la pila ya existe
+aws cloudformation describe-stacks --stack-name "$stack_name" --region "$region" > /dev/null 2>&1
 
-# Verificar si la creación de la pila fue exitosa
+if [ $? -eq 0 ]; then
+    # La pila ya existe, actualízala
+    echo "La pila de CloudFormation ya existe. Actualizando..."
+    aws cloudformation update-stack \
+        --stack-name "$stack_name" \
+        --template-body "file://$template_file" \
+        --region "$region" \
+        --capabilities CAPABILITY_NAMED_IAM
+else
+    # La pila no existe, créala
+    echo "La pila de CloudFormation no existe. Creando..."
+    aws cloudformation create-stack \
+        --stack-name "$stack_name" \
+        --template-body "file://$template_file" \
+        --region "$region" \
+        --capabilities CAPABILITY_NAMED_IAM
+fi
+
+# Esperar hasta que la creación o actualización se complete
+aws cloudformation wait stack-create-complete --stack-name "$stack_name" --region "$region" || \
+aws cloudformation wait stack-update-complete --stack-name "$stack_name" --region "$region"
+
+# Verificar si la creación o actualización de la pila fue exitosa
 if [ $? -eq 0 ]; then
     echo "Pila de CloudFormation creada o actualizada con éxito."
 else
