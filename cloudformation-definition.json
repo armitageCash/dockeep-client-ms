@@ -15,7 +15,7 @@
         "RequiresCompatibilities": ["FARGATE"],
         "Cpu": "256",
         "Memory": "512",
-        "ExecutionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+        "ExecutionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
         "ContainerDefinitions": [
           {
             "Name": "mi-contenedor",
