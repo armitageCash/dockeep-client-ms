@@ -36,7 +36,7 @@
         "Port": 3000,
         "Protocol": "HTTP",
         "TargetType": "ip",
-        "VpcId": "tu-ID-de-VPC"
+        "VpcId": "vpc-0da3cc621412dd80c"
       }
     },
     "MyService": {
