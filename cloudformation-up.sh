@@ -12,7 +12,7 @@ template_file="cloudformation-definition.json"
 # Nombre del archivo JSON de tags (opcional)
 
 # Región de AWS donde deseas crear la pila
-region="us-east-1"
+region="us-east-2"
 
 # Comando para crear la pila de CloudFormation
 aws cloudformation create-stack \

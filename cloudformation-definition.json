@@ -19,7 +19,7 @@
         "ContainerDefinitions": [
           {
             "Name": "mi-contenedor",
-            "Image": "459930247502.dkr.ecr.us-east-1.amazonaws.com/latest",
+            "Image": "459930247502.dkr.ecr.us-east-2.amazonaws.com/dockeep-ecr-repository:latest",
             "PortMappings": [
               {
                 "ContainerPort": 3000
