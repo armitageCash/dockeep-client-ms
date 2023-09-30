@@ -1,0 +1,72 @@
+{
+  "Description": "Stack para crear un clúster ECS Fargate con un servicio y ALB",
+  "Resources": {
+    "MyCluster": {
+      "Type": "AWS::ECS::Cluster",
+      "Properties": {
+        "ClusterName": "MiClusterFargate"
+      }
+    },
+    "MyTaskDefinition": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "Family": "mi-tarea-fargate",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": ["FARGATE"],
+        "Cpu": "256",
+        "Memory": "512",
+        "ExecutionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+        "ContainerDefinitions": [
+          {
+            "Name": "mi-contenedor",
+            "Image": "459930247502.dkr.ecr.us-east-1.amazonaws.com/latest",
+            "PortMappings": [
+              {
+                "ContainerPort": 3000
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "MyTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Name": "MiTargetGroup",
+        "Port": 3000,
+        "Protocol": "HTTP",
+        "TargetType": "ip",
+        "VpcId": "tu-ID-de-VPC"
+      }
+    },
+    "MyService": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "MyCluster"
+        },
+        "ServiceName": "MiServicioFargate",
+        "TaskDefinition": {
+          "Ref": "MyTaskDefinition"
+        },
+        "LaunchType": "FARGATE",
+        "DesiredCount": 2,
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "Subnets": ["subnet-0add8a303e4598bc9"],
+            "SecurityGroups": ["sg-0cd652cf91cb0a13e"]
+          }
+        },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": {
+              "Ref": "MyTargetGroup"
+            },
+            "ContainerName": "mi-contenedor",
+            "ContainerPort": 3000
+          }
+        ]
+      }
+    }
+  }
+}

@@ -52,9 +52,8 @@ jobs:
       - name: Update ECS service
         run: |
           aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition ${{ env.ECS_TASK_DEFINITION }} --force-new-deployment
-
-  integrate-openapi:
-    name: Integrate OpenAPI
+  cloudformation-stack-up:
+    name: Run Custom Script
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -66,16 +65,33 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Set ECS ELB Endpoint
+      - name: Run Custom Script
         run: |
-          echo "ECS_ELB_ENDPOINT=http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/" >> $GITHUB_ENV
-      - name: Run Deploy to ECS Fargate script
-        run: |
-          # Cambia la ruta al script Bash
-          bash deploy-openapi-to-apigateway.sh
-      - name: Create or Update API Gateway
-        run: |
-          aws apigateway create-or-update-api --rest-api-id ${{ env.API_ID }} --mode merge --fail-on-warnings
-      - name: Create Deployment
-        run: |
-          aws apigateway create-deployment --rest-api-id ${{ env.API_ID }} --stage-name develop --description despliegue-dockeep-clients-ms
+          # Cambia la ruta al script Bash que deseas ejecutar
+          bash cloudformation-up.sh
+  # integrate-openapi:
+  #  name: Integrate OpenAPI
+  #   runs-on: ubuntu-latest
+  #   needs: deploy
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ env.AWS_REGION }}
+  #     - name: Set ECS ELB Endpoint
+  #       run: |
+  #         echo "ECS_ELB_ENDPOINT=http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/" >> $GITHUB_ENV
+  #     - name: Run Deploy to ECS Fargate script
+  #       run: |
+  #         # Cambia la ruta al script Bash
+  #         bash deploy-openapi-to-apigateway.sh
+  #     - name: Create or Update API Gateway
+  #       run: |
+  #         aws apigateway create-or-update-api --rest-api-id ${{ env.API_ID }} --mode merge --fail-on-warnings
+  #     - name: Create Deployment
+  #       run: |
+  #         aws apigateway create-deployment --rest-api-id ${{ env.API_ID }} --stage-name develop --description despliegue-dockeep-clients-ms
