@@ -10,27 +10,13 @@ template_file="cloudformation-definition.json"
 region="us-east-2"
 
 # Obtener el estado de la pila
-stack_status=$(aws cloudformation describe-stacks --stack-name "$stack_name" --region "$region" --query 'Stacks[0].StackStatus' --output text 2>/dev/null)
-
-if [ -n "$stack_status" ]; then
-    # La pila ya existe, actualízala
-    echo "La pila de CloudFormation ya existe. Actualizando..."
-    aws cloudformation update-stack \
-        --stack-name "$stack_name" \
-        --template-body "file://$template_file" \
-        --region "$region" \
-        --mode merge \
-        --fail-on-warnings \
-        --capabilities CAPABILITY_NAMED_IAM
-else
-    # La pila no existe, créala
-    echo "La pila de CloudFormation no existe. Creando..."
-    aws cloudformation create-stack \
-        --stack-name "$stack_name" \
-        --template-body "file://$template_file" \
-        --region "$region" \
-        --capabilities CAPABILITY_NAMED_IAM
-fi
+# La pila no existe, créala
+echo "La pila de CloudFormation no existe. Creando..."
+aws cloudformation create-stack \
+    --stack-name "$stack_name" \
+    --template-body "file://$template_file" \
+    --region "$region" \
+    --capabilities CAPABILITY_NAMED_IAM
 
 # Esperar hasta que la creación o actualización se complete
 aws cloudformation wait stack-create-complete --stack-name "$stack_name" --region "$region" || \
