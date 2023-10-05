@@ -54,7 +54,7 @@ jobs:
           # Cambia la ruta al script Bash que deseas ejecutar
           bash cloudformation-up.sh
   deploy:
-    name: Upload image to AWS ECR
+    name: Update service ECS
     runs-on: ubuntu-latest
     needs: cloudformation-stack-up
     steps:
