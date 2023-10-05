@@ -19,6 +19,8 @@ if [ -n "$stack_status" ]; then
         --stack-name "$stack_name" \
         --template-body "file://$template_file" \
         --region "$region" \
+        --mode merge \
+        --fail-on-warnings \
         --capabilities CAPABILITY_NAMED_IAM
 else
     # La pila no existe, créala
