@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Nombre de la pila de CloudFormation
-stack_name="dockeep-clients-ms-task-definition"
+stack_name="dockep-clients-ms-stack"
 
 # Nombre del archivo JSON de la plantilla
 template_file="cloudformation-definition.json"
@@ -9,18 +9,16 @@ template_file="cloudformation-definition.json"
 # Región de AWS donde deseas crear la pila
 region="us-east-2"
 
-# Comprobar si la pila ya existe
-aws cloudformation describe-stacks --stack-name "$stack_name" --region "$region" > /dev/null 2>&1
+# Obtener el estado de la pila
+stack_status=$(aws cloudformation describe-stacks --stack-name "$stack_name" --region "$region" --query 'Stacks[0].StackStatus' --output text 2>/dev/null)
 
-if [ $? -eq 0 ]; then
+if [ -n "$stack_status" ]; then
     # La pila ya existe, actualízala
     echo "La pila de CloudFormation ya existe. Actualizando..."
     aws cloudformation update-stack \
         --stack-name "$stack_name" \
         --template-body "file://$template_file" \
         --region "$region" \
-        --mode merge \
-        --fail-on-warnings \
         --capabilities CAPABILITY_NAMED_IAM
 else
     # La pila no existe, créala
