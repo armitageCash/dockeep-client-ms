@@ -10,7 +10,5 @@ paths:
           description: Respuesta exitosa
       x-amazon-apigateway-integration:
         type: http_proxy
-        uri: "http://${stageVariables.ECS_ELB_ENDPOINT}/apigateway" # Reemplaza con la URL real de tu ELB
+        uri: "http://dockeep-clients-ms-elb-test-254989589.us-east-2.elb.amazonaws.com/" # Reemplaza con la URL real de tu ELB
         httpMethod: GET
-        connectionType: VPC_LINK # Si tu servicio ECS está en la misma VPC que la API Gateway
-        connectionId: eice-0dcee94236cf7f81e # Reemplaza con el ID de tu VPC Link

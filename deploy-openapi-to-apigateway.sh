@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Comando para importar la definición OpenAPI desde S3 y obtener el ID de la API
 api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
 echo "API ID: $api_id"
 
