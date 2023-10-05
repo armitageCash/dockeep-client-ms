@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Nombre de la pila de CloudFormation
-stack_name="dockep-clients-ms-stack"
+stack_name="dockeep-clients-ms-task-definition"
 
 # Nombre del archivo JSON de la plantilla
 template_file="cloudformation-definition.json"
