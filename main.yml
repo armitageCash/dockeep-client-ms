@@ -3,7 +3,7 @@ info:
   title: Doockeep clients microservice
   version: "1.0"
 servers:
-  - url: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/"
+  - url: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com"
 paths:
   /apigateway:
     get:
