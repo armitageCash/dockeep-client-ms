@@ -12,5 +12,5 @@ paths:
           description: Respuesta exitosa
       x-amazon-apigateway-integration:
         type: http_proxy
-        uri: "/apigateway" # Esto debería ser un URI relativo a la URL del servidor
+        uri: "/apigateway" # Usa "/" si deseas que la solicitud se dirija a la raíz del servidor
         httpMethod: GET
