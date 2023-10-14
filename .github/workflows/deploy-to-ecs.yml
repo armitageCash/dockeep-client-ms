@@ -88,6 +88,10 @@ jobs:
         run: |
           # Cambia la ruta al script Bash
           bash deploy-openapi-to-apigateway.sh
+      - name: APIID
+        run: |
+          # show APi_ID
+          echo ${{ env.API_ID }}
       - name: Create or Update API Gateway
         run: |
           aws apigateway create-or-update-api --rest-api-id ${{ env.API_ID }} --mode merge --fail-on-warnings
