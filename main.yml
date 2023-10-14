@@ -2,6 +2,8 @@ openapi: "3.0.1"
 info:
   title: Doockeep clients microservice
   version: "1.0"
+servers:
+  - url: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/"
 paths:
   /apigateway:
     get:
@@ -10,5 +12,5 @@ paths:
           description: Respuesta exitosa
       x-amazon-apigateway-integration:
         type: http_proxy
-        uri: "http://dockeep-clients-ms-elb-test-254989589.us-east-2.elb.amazonaws.com/" # Reemplaza con la URL real de tu ELB
+        uri: "/apigateway" # Esto debería ser un URI relativo a la URL del servidor
         httpMethod: GET
