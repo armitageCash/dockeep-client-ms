@@ -83,7 +83,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Set ECS ELB Endpoint
         run: |
-          echo "ECS_ELB_ENDPOINT=http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/" >> $GITHUB_ENV
+          echo "ECS_ELB_ENDPOINT=http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/" >> $GITHUB_ENV
       - name: Deploy OpenAPI definition to apigateway
         run: |
           # Cambia la ruta al script Bash
