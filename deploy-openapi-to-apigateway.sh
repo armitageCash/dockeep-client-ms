@@ -11,10 +11,19 @@ STAGE_NAME="develop" # Cambia "production" a "develop"
 VARIABLE_NAME="ECS_ELB_ENDPOINT"
 VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
 
-# Configura la stage Variable en tu API Gateway utilizando la variable API_ID
-aws apigateway update-stage \
-  --rest-api-id "$API_ID" \
-  --stage-name "$STAGE_NAME" \
-  --patch-operations "op=add,path=/variables/$VARIABLE_NAME,value=$VARIABLE_VALUE"
+# Verifica si la etapa ya existe
+if aws apigateway get-stage --rest-api-id "$API_ID" --stage-name "$STAGE_NAME" &> /dev/null; then
+  # Si la etapa ya existe, actualiza la variable
+  aws apigateway update-stage \
+    --rest-api-id "$API_ID" \
+    --stage-name "$STAGE_NAME" \
+    --patch-operations "op=replace,path=/variables/$VARIABLE_NAME,value=$VARIABLE_VALUE"
+else
+  # Si la etapa no existe, crea la etapa y establece la variable
+  aws apigateway create-stage \
+    --rest-api-id "$API_ID" \
+    --stage-name "$STAGE_NAME" \
+    --variables "$VARIABLE_NAME=$VARIABLE_VALUE"
+fi
 
 # Aquí puedes agregar cualquier otro paso que necesites en tu script
