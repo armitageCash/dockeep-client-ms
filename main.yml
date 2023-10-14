@@ -1,16 +1,22 @@
 openapi: "3.0.1"
 info:
-  title: Doockeep clients microservice
-  version: "1.0"
+  title: "clients"
+  version: "2023-10-14 14:58:44UTC"
 servers:
-  - url: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com"
+- url: "https://ietnszce62.execute-api.us-east-2.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: ""
 paths:
   /apigateway:
-    get:
+    x-amazon-apigateway-any-method:
       responses:
-        "200":
-          description: Respuesta exitosa
+        default:
+          description: "Default response for ANY /apigateway"
       x-amazon-apigateway-integration:
-        type: http_proxy
-        uri: "/" # Usa "/" si deseas que la solicitud se dirija a la raíz del servidor
-        httpMethod: GET
+        payloadFormatVersion: "1.0"
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/apigateway"
+        connectionType: "INTERNET"
+x-amazon-apigateway-importexport-version: "1.0"
