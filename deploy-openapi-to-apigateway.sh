@@ -25,7 +25,6 @@ if aws apigateway get-stage --rest-api-id "$API_ID" --stage-name "$STAGE_NAME" &
   aws apigateway update-stage \
     --rest-api-id "$API_ID" \
     --stage-name "$STAGE_NAME" \
-    --deployment-id "$deployment_id" \
     --patch-operations "op=replace,path=/variables/$VARIABLE_NAME,value=$VARIABLE_VALUE"
 else
   # Si la etapa no existe, crea la etapa y establece la variable
