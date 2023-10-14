@@ -7,11 +7,11 @@ echo "API ID: $api_id"
 export API_ID="$api_id"
 
 # Define la etapa y la variable que deseas configurar
-STAGE_NAME="default" # Cambia "production" a "develop"
+STAGE_NAME="develop" # Cambia "production" a "develop"
 VARIABLE_NAME="ECS_ELB_ENDPOINT"
 VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
 
-# Configura la stageVariable en tu API Gateway utilizando la variable API_ID
+# Configura la stage Variable en tu API Gateway utilizando la variable API_ID
 aws apigateway update-stage \
   --rest-api-id "$API_ID" \
   --stage-name "$STAGE_NAME" \
