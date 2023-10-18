@@ -9,19 +9,11 @@ if [ -n "$API_ID" ]; then
   
   api_id=$API_ID
 
-  # Reimportar API para obtener nuevos paths
-  new_api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
-
   # Mergear nuevo API a existente
   aws apigateway put-rest-api --body "fileb://main.yml" --query 'id' --output text --mode merge --rest-api-id "$api_id"
-
-  # Eliminar API nuevo
-  aws apigateway delete-rest-api --rest-api-id "$new_api_id"
-
   echo "API ID: $api_id"
 
   STAGE_NAME="develop"
-
   VARIABLE_NAME="ECS_ELB_ENDPOINT"
   VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
 
