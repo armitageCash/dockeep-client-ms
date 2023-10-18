@@ -92,9 +92,3 @@ jobs:
         run: |
           # show API ID
           echo $API_ID
-      - name: Create or Update API Gateway
-        run: |
-          aws apigateway create-or-update-api --rest-api-id ${{ env.API_ID }} --mode merge --fail-on-warnings
-      - name: Create Deployment
-        run: |
-          aws apigateway create-deployment --rest-api-id ${{ env.API_ID }} --stage-name develop --description despliegue-dockeep-clients-ms
