@@ -3,7 +3,7 @@ info:
   title: "clients"
   version: "2023-10-14 14:58:44UTC"
 servers:
-- url: "https://ietnszce62.execute-api.us-east-2.amazonaws.com/{basePath}"
+- url: "https://b556rn7b86.execute-api.us-east-2.amazonaws.com/{basePath}"
   variables:
     basePath:
       default: ""

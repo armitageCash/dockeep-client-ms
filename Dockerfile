@@ -10,11 +10,14 @@ COPY package*.json ./
 # Instala las dependencias del proyecto
 RUN npm install
 
-# Copia todo el código fuente al directorio de trabajo
-COPY . .
+# Copia el contenido de la carpeta "node_modules" al directorio de trabajo
+COPY node_modules ./node_modules
+
+# Copia el contenido de la carpeta "build" al directorio de trabajo
+COPY build ./build
 
 # Expone el puerto 3000 que será utilizado por la aplicación
-# EXPOSE 3000
+EXPOSE 3000
 
 # Comando para ejecutar la aplicación cuando se inicie el contenedor
-CMD ["node", "app.js"]
+CMD ["node", "build/entrypoint/api/server.js"]
