@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Obtener ID del API si existe
 API_ID=$(aws apigateway get-rest-apis --query "items[?name=='clients'].id" --output text)
 
 if [ -n "$API_ID" ]; then
@@ -7,7 +8,16 @@ if [ -n "$API_ID" ]; then
   echo "API Gateway clients existe, actualizando..."
   
   api_id=$API_ID
-  
+
+  # Reimportar API para obtener nuevos paths
+  new_api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
+
+  # Mergear nuevo API a existente
+  aws apigateway merge-rest-apis --rest-api-id "$api_id" --target-rest-api-id "$new_api_id"
+
+  # Eliminar API nuevo
+  aws apigateway delete-rest-api --rest-api-id "$new_api_id"
+
   echo "API ID: $api_id"
 
   STAGE_NAME="develop"
@@ -42,14 +52,12 @@ if [ -n "$API_ID" ]; then
 else
 
   echo "API Gateway clients no existe, importando..."
-
+  
   api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
 
   echo "API ID: $api_id"
 
-  STAGE_NAME="develop"
-
-  # Crear etapa, variables, etc. para el API nuevo
+  # Creación de etapas, variables, etc para API nuevo
 
 fi
 
