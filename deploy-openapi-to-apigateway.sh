@@ -13,7 +13,7 @@ if [ -n "$API_ID" ]; then
   new_api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
 
   # Mergear nuevo API a existente
-  aws apigateway merge-rest-apis --rest-api-id "$api_id" --target-rest-api-id "$new_api_id"
+  aws apigateway put-rest-api --mode merge --rest-api-id "$api_id" --target-rest-api-id "$new_api_id"
 
   # Eliminar API nuevo
   aws apigateway delete-rest-api --rest-api-id "$new_api_id"
