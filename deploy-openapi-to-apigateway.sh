@@ -1,38 +1,56 @@
 #!/bin/bash
 
-api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
-echo "API ID: $api_id"
+API_ID=$(aws apigateway get-rest-apis --query "items[?name=='clients'].id" --output text)
 
-# Exporta el valor de api_id como variable de entorno
-export API_ID="$api_id"
+if [ -n "$API_ID" ]; then
 
-# Define la etapa y la variable que deseas configurar
-STAGE_NAME="develop" # Cambia "production" a "develop"
-VARIABLE_NAME="ECS_ELB_ENDPOINT"
-VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
+  echo "API Gateway clients existe, actualizando..."
+  
+  api_id=$API_ID
+  
+  echo "API ID: $api_id"
 
-# Crear una nueva implementación (deployment)
-deployment_id=$(aws apigateway create-deployment \
-  --rest-api-id "$API_ID" \
-  --stage-name "develop" \
-  --stage-description 'Development Stage' \
-  --description 'First deployment to the dev stage' \
-  --query "id" --output text)
+  STAGE_NAME="develop"
 
-# Verifica si la etapa ya existe
-if aws apigateway get-stage --rest-api-id "$API_ID" --stage-name "$STAGE_NAME" &> /dev/null; then
-  # Si la etapa ya existe, actualiza la variable
-  aws apigateway update-stage \
-    --rest-api-id "$API_ID" \
-    --stage-name "$STAGE_NAME" \
-    --patch-operations "op=replace,path=/variables/$VARIABLE_NAME,value=$VARIABLE_VALUE"
+  VARIABLE_NAME="ECS_ELB_ENDPOINT"
+  VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
+
+  deployment_id=$(aws apigateway create-deployment \
+    --rest-api-id "$api_id" \
+    --stage-name "develop" \
+    --stage-description 'Development Stage' \
+    --description 'Update deployment to the dev stage' \
+    --query "deploymentId" --output text)
+
+  if aws apigateway get-stage --rest-api-id "$api_id" --stage-name "$STAGE_NAME" &> /dev/null; then
+
+    aws apigateway update-stage \
+      --rest-api-id "$api_id" \
+      --stage-name "$STAGE_NAME" \
+      --patch-operations "op=replace,path=/variables/$VARIABLE_NAME,value=$VARIABLE_VALUE"
+
+  else
+
+    aws apigateway create-stage \
+      --rest-api-id "$api_id" \
+      --stage-name "$STAGE_NAME" \
+      --deployment-id "$deployment_id" \
+      --variables "$VARIABLE_NAME=$VARIABLE_VALUE"
+
+  fi
+
 else
-  # Si la etapa no existe, crea la etapa y establece la variable
-  aws apigateway create-stage \
-    --rest-api-id "$API_ID" \
-    --stage-name "$STAGE_NAME" \
-    --deployment-id "$deployment_id" \
-    --variables "$VARIABLE_NAME=$VARIABLE_VALUE"
+
+  echo "API Gateway clients no existe, importando..."
+
+  api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
+
+  echo "API ID: $api_id"
+
+  STAGE_NAME="develop"
+
+  # Crear etapa, variables, etc. para el API nuevo
+
 fi
 
-# Aquí puedes agregar cualquier otro paso que necesites en tu script
+# Resto del script...
