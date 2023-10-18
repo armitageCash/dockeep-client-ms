@@ -57,8 +57,4 @@ else
 
   echo "API ID: $api_id"
 
-  # Creación de etapas, variables, etc para API nuevo
-
 fi
-
-# Resto del script...

@@ -1,18 +1,37 @@
 import userManager from "../../infraestructure/driven/userManager";
 
 export interface Input {
-    email: string;
-    password: string;
+    tenandId: string;
 }
 
-export interface Iuser {
+export interface SubscriptionPlan {
+    name: string;
+    price: number;
+    features: string[]; 
+}
+
+export interface UserProfile {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: Date;
+    address: string;
+    phoneNumber: string;
+    countryCode: string;
+    ciudad: string;
+    zipcode: string;
+    subscription: SubscriptionPlan;
+}
+
+export interface User {
+    id: number;
+    username: string;
     email: string;
-    password: string;
+    tenantId: number;
+    profile: UserProfile;
 }
 
 export interface Output {
-    email: string;
-    password: string;
+    user: User;
 }
 
 export interface DependenciesType {
