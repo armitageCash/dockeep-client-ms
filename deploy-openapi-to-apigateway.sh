@@ -30,7 +30,7 @@ if [ -n "$API_ID" ]; then
     --stage-name "develop" \
     --stage-description 'Development Stage' \
     --description 'Update deployment to the dev stage' \
-    --query "deploymentId" --output text)
+    --query "id" --output text)
 
   if aws apigateway get-stage --rest-api-id "$api_id" --stage-name "$STAGE_NAME" &> /dev/null; then
 
