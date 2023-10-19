@@ -4,9 +4,9 @@ import bodyParser from 'koa-bodyparser';
 
 const app = new Koa();
 
-app.use(bodyParser());
-app.use(router.routes());
-app.use(router.allowedMethods());
+app.use(bodyParser())
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 app.listen(3000, () => {
   console.log('Servidor Koa en funcionamiento en el puerto 3000');  
