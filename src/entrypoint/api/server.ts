@@ -1,8 +1,10 @@
 import Koa from 'koa';
 import router from '../../infraestructure/adapters/http/koa-http-adapter';
+import bodyParser from 'koa-bodyparser';
 
 const app = new Koa();
 
+app.use(bodyParser());
 app.use(router.routes());
 app.use(router.allowedMethods());
 

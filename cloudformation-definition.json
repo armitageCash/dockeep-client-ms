@@ -4,7 +4,7 @@
   "Parameters": {
     "ECSClusterName": {
       "Type": "String",
-      "Default": "dockeep-clients-ms-cluster"
+      "Default": "dockeep-users-ms-cluster"
     },
     "SecurityGroupIDs": {
       "Type": "CommaDelimitedList",
@@ -20,7 +20,7 @@
     },
     "LoadBalancerName": {
       "Type": "String",
-      "Default": "dockeep-clients-ms-elb"
+      "Default": "dockeep-users-ms-elb"
     }
   },
   "Resources": {
@@ -35,7 +35,7 @@
     "ECSTaskDefinition": {
       "Type": "AWS::ECS::TaskDefinition",
       "Properties": {
-        "Family": "dockeep-clients-ms-task-definition",
+        "Family": "dockeep-users-ms-task-definition",
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": ["FARGATE"],
         "Cpu": "256",
@@ -43,7 +43,7 @@
         "ExecutionRoleArn": "arn:aws:iam::459930247502:role/ecsTaskExecutionRole",
         "ContainerDefinitions": [
           {
-            "Name": "dockeep-clients-ms-container",
+            "Name": "dockeep-users-ms-container",
             "Image": "459930247502.dkr.ecr.us-east-2.amazonaws.com/dockeep-ecr-repository:latest",
             "PortMappings": [
               {
@@ -67,7 +67,7 @@
             "Weight": 1
           }
         ],
-        "ServiceName": "dockeep-clients-ms-service",
+        "ServiceName": "dockeep-users-ms-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "TaskDefinition": {
@@ -75,7 +75,7 @@
         },
         "LoadBalancers": [
           {
-            "ContainerName": "dockeep-clients-ms-container",
+            "ContainerName": "dockeep-users-ms-container",
             "ContainerPort": 3000,
             "TargetGroupArn": {
               "Ref": "TargetGroup"
@@ -134,7 +134,7 @@
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
         "HealthCheckPath": "/status-check",
-        "Name": "dockeep-clients-ms-group",
+        "Name": "dockeep-users-ms-group",
         "Port": 80,
         "Protocol": "HTTP",
         "TargetType": "ip",

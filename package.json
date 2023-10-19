@@ -22,7 +22,9 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@types/koa-bodyparser": "^4.3.11",
     "koa": "^2.14.1",
+    "koa-bodyparser": "^4.4.1",
     "koa-router": "^12.0.0"
   }
 }

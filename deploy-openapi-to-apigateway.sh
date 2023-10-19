@@ -1,15 +1,12 @@
 #!/bin/bash
 
-# Obtener ID del API si existe
-API_ID=$(aws apigateway get-rest-apis --query "items[?name=='clients'].id" --output text)
+API_ID=$(aws apigateway get-rest-apis --query "items[?name=='users'].id" --output text)
 
 if [ -n "$API_ID" ]; then
 
-  echo "API Gateway clients existe, actualizando..."
-  
+  echo "API Gateway users existe, actualizando..."
   api_id=$API_ID
 
-  # Mergear nuevo API a existente
   aws apigateway put-rest-api --body "fileb://main.yml" --query 'id' --output text --mode merge --rest-api-id "$api_id"
   echo "API ID: $api_id"
 
@@ -25,28 +22,20 @@ if [ -n "$API_ID" ]; then
     --query "id" --output text)
 
   if aws apigateway get-stage --rest-api-id "$api_id" --stage-name "$STAGE_NAME" &> /dev/null; then
-
     aws apigateway update-stage \
       --rest-api-id "$api_id" \
       --stage-name "$STAGE_NAME" \
       --patch-operations "op=replace,path=/variables/$VARIABLE_NAME,value=$VARIABLE_VALUE"
-
   else
-
     aws apigateway create-stage \
       --rest-api-id "$api_id" \
       --stage-name "$STAGE_NAME" \
       --deployment-id "$deployment_id" \
       --variables "$VARIABLE_NAME=$VARIABLE_VALUE"
-
   fi
 
 else
-
-  echo "API Gateway clients no existe, importando..."
-  
+  echo "API Gateway users no existe, importando..."
   api_id=$(aws apigateway import-rest-api --body "fileb://main.yml" --query 'id' --output text)
-
   echo "API ID: $api_id"
-
 fi

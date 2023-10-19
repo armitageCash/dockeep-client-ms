@@ -1,6 +1,6 @@
 openapi: "3.0.1"
 info:
-  title: "clients"
+  title: "users"
   version: "2023-10-14 14:58:44UTC"
 servers:
   - url: "https://b556rn7b86.execute-api.us-east-2.amazonaws.com/{basePath}"

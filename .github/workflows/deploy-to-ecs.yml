@@ -8,10 +8,10 @@ on:
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  ECS_SERVICE: dockeep-clients-ms-service
-  ECS_CLUSTER: dockeep-clients-ms-cluster
-  ECS_TASK_DEFINITION: dockeep-clients-ms-task-definition
-  CONTAINER_NAME: dockeep-clients-ms-container
+  ECS_SERVICE: dockeep-users-ms-service
+  ECS_CLUSTER: dockeep-users-ms-cluster
+  ECS_TASK_DEFINITION: dockeep-users-ms-task-definition
+  CONTAINER_NAME: dockeep-users-ms-container
 
 jobs:
   create-docker-image:

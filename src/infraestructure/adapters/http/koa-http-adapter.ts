@@ -13,5 +13,10 @@ router.get('/status-check', async (ctx: Koa.Context) => {
   ctx.body = 'La aplicación está en funcionamiento';
 });
 
+router.post('/users', async (ctx: Koa.Context) => {
+  ctx.status = 200;
+  ctx.body = ctx.request.body;
+});
+
 
 export default router;
