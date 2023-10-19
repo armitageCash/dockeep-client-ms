@@ -12,4 +12,9 @@ router.post('/api/users', async (ctx: Koa.Context) => {
   ctx.body = ctx.request.body;
 });
 
+router.get('/api/users', async (ctx: Koa.Context) => {
+  ctx.status = 200;
+  ctx.body = [];
+});
+
 export default router;
