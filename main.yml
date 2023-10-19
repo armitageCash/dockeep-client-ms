@@ -8,17 +8,6 @@ servers:
       basePath:
         default: ""
 paths:
-  /apigateway:
-    x-amazon-apigateway-any-method:
-      responses:
-        default:
-          description: "Default response for ANY /apigateway"
-      x-amazon-apigateway-integration:
-        payloadFormatVersion: "1.0"
-        type: "http_proxy"
-        httpMethod: "GET"
-        uri: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/apigateway"
-        connectionType: "INTERNET"
   /users: # Ruta para crear un usuario
     post: # Método POST
       summary: "Crear un usuario"
@@ -39,7 +28,7 @@ paths:
       x-amazon-apigateway-integration: # Integración de Amazon
         type: "http_proxy" # Usar http_proxy para apuntar al mismo ELB
         httpMethod: "POST"
-        uri: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/users"
+        uri: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/api/users"
 components:
   schemas:
     User:
