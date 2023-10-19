@@ -8,7 +8,7 @@ servers:
       basePath:
         default: ""
 paths:
-  users-list: # Ruta para obtener la lista de usuarios
+  /users-list: # Ruta para obtener la lista de usuarios
     get: # Método GET
       summary: "Obtener la lista de usuarios"
       responses:
