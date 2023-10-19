@@ -12,7 +12,7 @@ if [ -n "$API_ID" ]; then
 
   STAGE_NAME="develop"
   VARIABLE_NAME="ECS_ELB_ENDPOINT"
-  VARIABLE_VALUE="http://dockeep-clients-ms-elb-1163464849.us-east-2.elb.amazonaws.com/"
+  VARIABLE_VALUE="http://dockeep-users-ms-elb-1445705399.us-east-2.elb.amazonaws.com/"
 
   deployment_id=$(aws apigateway create-deployment \
     --rest-api-id "$api_id" \
