@@ -28,7 +28,7 @@ paths:
       x-amazon-apigateway-integration: # Integración de Amazon
         type: "http_proxy" # Usar http_proxy para apuntar al mismo ELB
         httpMethod: "POST"
-        uri: "http://dockeep-clients-ms-elb-690144778.us-east-2.elb.amazonaws.com/api/users"
+        uri: "http://dockeep-users-ms-elb-1445705399.us-east-2.elb.amazonaws.com/api/users"
 components:
   schemas:
     User:
